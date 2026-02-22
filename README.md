@@ -44,7 +44,6 @@ MCP server that connects Claude Desktop, Cursor, and other AI tools to your Drop
 2. Get a refresh token by running the included auth helper:
 
 ```bash
-cd /Users/Beheerder/Code-projects/dropbox-mcp-server
 python auth_helper.py
 ```
 
@@ -65,7 +64,6 @@ cp .env.example .env
 ### 4. Install Dependencies
 
 ```bash
-cd /Users/Beheerder/Code-projects/dropbox-mcp-server
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -79,8 +77,8 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 {
   "mcpServers": {
     "dropbox": {
-      "command": "/Users/Beheerder/Code-projects/dropbox-mcp-server/.venv/bin/python",
-      "args": ["/Users/Beheerder/Code-projects/dropbox-mcp-server/server.py"],
+      "command": "/path/to/dropbox-mcp-server/.venv/bin/python",
+      "args": ["/path/to/dropbox-mcp-server/server.py"],
       "env": {
         "DROPBOX_APP_KEY": "your-app-key",
         "DROPBOX_APP_SECRET": "your-app-secret",
@@ -99,8 +97,8 @@ Add to your project's `.cursor/mcp.json`:
 {
   "mcpServers": {
     "dropbox": {
-      "command": "/Users/Beheerder/Code-projects/dropbox-mcp-server/.venv/bin/python",
-      "args": ["/Users/Beheerder/Code-projects/dropbox-mcp-server/server.py"],
+      "command": "/path/to/dropbox-mcp-server/.venv/bin/python",
+      "args": ["/path/to/dropbox-mcp-server/server.py"],
       "env": {
         "DROPBOX_APP_KEY": "your-app-key",
         "DROPBOX_APP_SECRET": "your-app-secret",
@@ -144,6 +142,15 @@ Once connected, you can ask Claude things like:
 - "Move /Drafts/report.md to /Final/report-v2.md"
 - "Get a shareable link for /Presentations/deck.pdf"
 - "How much storage am I using?"
+
+## Tests
+
+```bash
+source .venv/bin/activate
+pip install pytest pytest-asyncio
+pytest test_server.py -v
+# 44 tests covering text detection, formatting, and all tool functions (mocked Dropbox SDK)
+```
 
 ## Project Structure
 
