@@ -26,6 +26,13 @@ python auth_helper.py
 
 No test suite. No build step. No linting configured.
 
+# Docker
+docker build --target production -t dropbox-mcp .   # Build production image
+docker build --target development -t dropbox-mcp:dev .  # Build dev image
+```
+
+Multi-stage Dockerfile (Python 3.11-slim): builder → development → production. Uses `/opt/venv` virtual environment pattern for non-root user compatibility. Production stage copies only `server.py`. Exposes port 8080, runs in SSE mode by default. Also available via top-level `docker-compose.yml` as `dropbox-mcp` service (host port 8081).
+
 ## Architecture
 
 Single module: **`server.py`** (~575 lines) contains everything — FastMCP server, all 11 tools, Dropbox client lifecycle, and helpers.
