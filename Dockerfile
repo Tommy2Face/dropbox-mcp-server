@@ -26,7 +26,6 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy venv from builder
@@ -56,9 +55,15 @@ CMD ["python", "server.py"]
 FROM python:3.11-slim AS production
 WORKDIR /app
 
+LABEL org.opencontainers.image.title="dropbox-mcp" \
+      org.opencontainers.image.description="Dropbox MCP Server" \
+      org.opencontainers.image.version="1.0" \
+      org.opencontainers.image.vendor="Production"
+
 # Install only runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    dumb-init \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy venv from builder
@@ -67,7 +72,8 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONOPTIMIZE=2
+    PYTHONOPTIMIZE=2 \
+    TRANSPORT=sse
 
 # Copy source code (minimal)
 COPY server.py .
@@ -84,6 +90,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://127.0.0.1:8080/health || exit 0
 
-ENV TRANSPORT=sse
-
+ENTRYPOINT ["dumb-init", "--"]
 CMD ["python", "server.py"]
